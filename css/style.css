@@ -1,0 +1,330 @@
+/* ============================================
+   FONTS
+   Inter loaded from Google Fonts (see <head> link).
+   Abordage self-hosted — add the font file to /fonts (see fonts/README.txt)
+   ============================================ */
+@font-face {
+  font-family: 'Abordage';
+  src: url('../fonts/Abordage-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================
+   DESIGN TOKENS
+   Change these once and the whole site updates.
+   --color-accent is a PLACEHOLDER — swap for your real accent once decided.
+   ============================================ */
+:root {
+  --color-bg: #ffffff;
+  --color-text: #111111;
+  --color-text-muted: #666666;
+  --color-border: #e5e5e5;
+  --color-accent: #E0442A; /* placeholder — swap this */
+
+  --font-sans: 'Inter', system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: 'Abordage', var(--font-sans); /* falls back to Inter until the font file is added */
+
+  --max-width: 1100px;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 2rem;
+  --space-xl: 4rem;
+}
+
+/* ---- Reset ---- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  color: var(--color-text);
+  background: var(--color-bg);
+  line-height: 1.5;
+}
+
+img { max-width: 100%; display: block; }
+a { color: inherit; text-decoration: none; }
+
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
+/* ---- Header / nav ---- */
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md) var(--space-lg);
+  max-width: var(--max-width);
+  margin: 0 auto;
+}
+
+.site-header .logo {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+
+.site-header nav a {
+  margin-left: var(--space-lg);
+  font-size: 0.95rem;
+}
+
+.site-header nav a:hover {
+  color: var(--color-accent);
+}
+
+/* ---- Work grid (homepage / passion projects) ---- */
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--space-lg);
+  max-width: var(--max-width);
+  margin: var(--space-xl) auto;
+  padding: 0 var(--space-lg);
+}
+
+@media (min-width: 900px) {
+  .work-grid {
+    grid-template-columns: repeat(2, 1fr); /* even 2-col grid, per the concept sketch — change to 3 if you prefer a denser grid */
+  }
+}
+
+.work-item img {
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: 4px;
+  transition: opacity 0.2s ease;
+}
+
+.work-item:hover img {
+  opacity: 0.85;
+}
+
+.work-item .work-title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  margin-top: var(--space-sm);
+}
+
+.work-item .work-category {
+  font-size: 0.7rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-top: 2px;
+}
+
+/* ---- About page ---- */
+.about-page {
+  max-width: 600px;
+  margin: var(--space-xl) auto;
+  padding: 0 var(--space-lg);
+}
+
+.about-page h1 {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  margin-bottom: var(--space-lg);
+}
+
+.profile-photo {
+  border-radius: 8px;
+  margin-bottom: var(--space-lg);
+}
+
+.contact-links {
+  list-style: none;
+  margin-top: var(--space-lg);
+}
+
+.contact-links li {
+  margin-bottom: var(--space-sm);
+}
+
+/* ---- Project case study page ---- */
+.project-page {
+  max-width: 800px;
+  margin: var(--space-xl) auto;
+  padding: 0 var(--space-lg);
+}
+
+.project-page h1 {
+  font-family: var(--font-display);
+  font-size: 2.25rem;
+  margin-bottom: var(--space-sm);
+}
+
+.project-meta {
+  color: var(--color-text-muted);
+  margin-bottom: var(--space-lg);
+}
+
+.project-page img,
+.project-page video {
+  margin: var(--space-lg) 0;
+  border-radius: 4px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-top: var(--space-lg);
+}
+
+.back-link:hover {
+  color: var(--color-accent);
+}
+
+/* ---- Case study section nav ---- */
+.case-study-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-lg);
+  margin: var(--space-lg) 0;
+  padding: var(--space-md) 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.case-study-nav a {
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.case-study-nav a:hover {
+  color: var(--color-accent);
+}
+
+/* ---- Case study sections ---- */
+.case-study-section {
+  margin: var(--space-xl) 0;
+  scroll-margin-top: var(--space-lg);
+}
+
+.section-label {
+  font-size: 0.85rem;
+  color: var(--color-accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-sm);
+}
+
+.case-study-section h2 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  margin-bottom: var(--space-md);
+}
+
+.process-step {
+  margin: var(--space-md) 0;
+  padding-left: var(--space-md);
+  border-left: 2px solid var(--color-border);
+}
+
+.process-step-number {
+  font-weight: 600;
+  margin-bottom: var(--space-sm);
+}
+
+/* ---- Hover-reveal image caption ---- */
+.image-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+.image-wrap .caption {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--space-md);
+  background: rgba(0, 0, 0, 0.55);
+  color: #ffffff;
+  font-size: 0.9rem;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.image-wrap:hover .caption {
+  opacity: 1;
+}
+
+/* ---- Scroll-triggered reveal ---- */
+.reveal-box {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal-box.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ---- Metrics / impact ---- */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-lg);
+  margin-top: var(--space-md);
+}
+
+.metric-number {
+  font-family: var(--font-display);
+  font-size: 2rem;
+}
+
+.metric-label {
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+/* ---- Project footer nav ---- */
+.project-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-border);
+}
+
+.project-nav a:hover {
+  color: var(--color-accent);
+}
+
+/* ---- Footer ---- */
+.site-footer {
+  text-align: center;
+  padding: var(--space-lg);
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.site-footer a:hover {
+  color: var(--color-accent);
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 600px) {
+  .site-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-sm);
+  }
+
+  .site-header nav a {
+    margin-left: 0;
+    margin-right: var(--space-md);
+  }
+
+  .work-grid {
+    grid-template-columns: 1fr;
+  }
+}
