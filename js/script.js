@@ -5,18 +5,358 @@ const revealTargets = document.querySelectorAll('.reveal-box');
 
 if (revealTargets.length) {
   const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target); // only animate once
+        revealObserver.unobserve(entry.target);
       }
     });
   }, { threshold: 0.2 });
 
-  revealTargets.forEach(el => revealObserver.observe(el));
+  revealTargets.forEach((element) => revealObserver.observe(element));
 }
 
-// Hover-reveal captions and custom cursor / drag effects can be added here
-// once the Figma design defines exactly what's needed.
+console.log('Portfolio loaded');
 
-console.log("Portfolio loaded");
+/* ==================================================
+   Book flip viewer
+   ================================================== */
+
+class BookFlip {
+  constructor(element, options) {
+    this.el = element;
+    this.accent = options.accent || '#E0442A';
+
+    this.el.style.setProperty('--book-accent', this.accent);
+
+    const cover = options.cover || {};
+    const backCover = options.backCover || {};
+
+    this.leaves = [
+      {
+        front: cover.outer || null,
+        back: cover.inner || null,
+        coverEnd: 'front'
+      },
+
+      ...options.pages.map((page, index) => ({
+        front: page.front || null,
+        back: page.back || null,
+        pageIndex: index + 1
+      })),
+
+      {
+        front: backCover.inner || null,
+        back: backCover.outer || null,
+        coverEnd: 'back'
+      }
+    ];
+
+    this.current = 0;
+    this.animating = false;
+
+    this.build();
+    this.render();
+    this.bindEvents();
+  }
+
+  build() {
+    this.el.innerHTML = `
+      <button class="book-nav prev" type="button" aria-label="Página anterior">
+        &larr;
+      </button>
+
+      <div class="book-stage"></div>
+
+      <button class="book-nav next" type="button" aria-label="Próxima página">
+        &rarr;
+      </button>
+    `;
+
+    this.stage = this.el.querySelector('.book-stage');
+    this.prevBtn = this.el.querySelector('.prev');
+    this.nextBtn = this.el.querySelector('.next');
+
+    this.cards = this.leaves.map((leaf) => {
+      const card = document.createElement('div');
+      card.className = 'book-leaf';
+
+      const transparentFront = this.isTransparent(leaf, 'front')
+        ? ' book-face-transparent'
+        : '';
+
+      const transparentBack = this.isTransparent(leaf, 'back')
+        ? ' book-face-transparent'
+        : '';
+
+      card.innerHTML = `
+        <div class="book-leaf-inner">
+          <div class="book-face front${transparentFront}">
+            ${this.renderFace(leaf.front, leaf, 'front')}
+          </div>
+
+          <div class="book-face back${transparentBack}">
+            ${this.renderFace(leaf.back, leaf, 'back')}
+          </div>
+        </div>
+      `;
+
+      this.stage.appendChild(card);
+      return card;
+    });
+  }
+
+  isTransparent(leaf, side) {
+    // Only Raízes faces 9, 10, 11, and 12 are semi-transparent.
+    if (this.el.dataset.book !== 'raizes') {
+      return false;
+    }
+
+    if (!leaf.pageIndex) {
+      return false;
+    }
+
+    const pageNumber = side === 'front'
+      ? leaf.pageIndex * 2 - 1
+      : leaf.pageIndex * 2;
+
+    return pageNumber >= 9 && pageNumber <= 12;
+  }
+
+  renderFace(url, leaf, side) {
+    const metadata = this.faceMeta(leaf, side);
+
+    if (url) {
+      return `<img src="${url}" alt="${metadata.alt}" loading="lazy">`;
+    }
+
+    return `
+      <div class="page-placeholder">
+        <span class="ph-icon">[image]</span>
+        <span class="ph-label">${metadata.label}</span>
+        <span class="ph-hint">${metadata.hint}</span>
+      </div>
+    `;
+  }
+
+  faceMeta(leaf, side) {
+    if (leaf.coverEnd === 'front') {
+      return side === 'front'
+        ? {
+            label: 'Capa',
+            hint: 'cover.webp',
+            alt: 'Capa do livro'
+          }
+        : {
+            label: 'Capa · verso',
+            hint: 'cover-verso.webp',
+            alt: 'Verso da capa do livro'
+          };
+    }
+
+    if (leaf.coverEnd === 'back') {
+      return side === 'front'
+        ? {
+            label: 'Contracapa · verso',
+            hint: 'back-cover-verso.webp',
+            alt: 'Verso da contracapa'
+          }
+        : {
+            label: 'Contracapa',
+            hint: 'back-cover.webp',
+            alt: 'Contracapa do livro'
+          };
+    }
+
+    const pageNumber = side === 'front'
+      ? leaf.pageIndex * 2 - 1
+      : leaf.pageIndex * 2;
+
+    const filename = `page-${String(pageNumber).padStart(2, '0')}.webp`;
+
+    return {
+      label: `Página ${pageNumber}`,
+      hint: filename,
+      alt: `Página ${pageNumber}`
+    };
+  }
+
+  render() {
+    const total = this.cards.length;
+
+    this.cards.forEach((card, index) => {
+      const inner = card.querySelector('.book-leaf-inner');
+      const flipped = index < this.current;
+
+      inner.style.transform = flipped
+        ? 'rotateY(-180deg)'
+        : 'rotateY(0deg)';
+
+      const depth = flipped
+        ? this.current - 1 - index
+        : index - this.current;
+
+      card.style.transform = `
+        translateZ(${-depth * 2.5}px)
+        rotateZ(${depth * (flipped ? -0.5 : 0.5)}deg)
+      `;
+
+      card.style.zIndex = total - depth;
+      card.style.opacity = depth > 5 ? 0 : 1;
+    });
+
+    this.prevBtn.disabled = this.current === 0;
+    this.nextBtn.disabled = this.current >= total;
+
+    const progress = this.el.parentElement.querySelector('[data-progress]');
+
+    if (progress) {
+      const label = this.current === 0
+        ? 'Capa'
+        : this.current >= total
+          ? 'Contracapa'
+          : `Folha aberta ${this.current} / ${total - 1}`;
+
+      progress.textContent = label;
+    }
+  }
+
+  next() {
+    if (this.animating || this.current >= this.cards.length) {
+      return;
+    }
+
+    this.animating = true;
+    this.current += 1;
+    this.render();
+
+    setTimeout(() => {
+      this.animating = false;
+    }, 700);
+  }
+
+  prev() {
+    if (this.animating || this.current <= 0) {
+      return;
+    }
+
+    this.animating = true;
+    this.current -= 1;
+    this.render();
+
+    setTimeout(() => {
+      this.animating = false;
+    }, 700);
+  }
+
+  bindEvents() {
+    this.nextBtn.addEventListener('click', () => this.next());
+    this.prevBtn.addEventListener('click', () => this.prev());
+
+    this.stage.addEventListener('click', (event) => {
+      const card = event.target.closest('.book-leaf');
+
+      if (!card) {
+        return;
+      }
+
+      const index = this.cards.indexOf(card);
+
+      if (index === this.current) {
+        this.next();
+      } else if (index === this.current - 1) {
+        this.prev();
+      }
+    });
+
+    this.el.tabIndex = 0;
+
+    this.el.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        this.next();
+      }
+
+      if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        this.prev();
+      }
+    });
+  }
+
+  static init(element, options) {
+    return new BookFlip(element, options);
+  }
+}
+
+/* ==================================================
+   Sequential page-image configuration
+
+   page-01.webp + page-02.webp = first physical interior leaf
+   page-03.webp + page-04.webp = second physical interior leaf
+   ================================================== */
+
+function createPageLeaves(folder, firstPage, lastPage) {
+  const leaves = [];
+
+  for (let page = firstPage; page <= lastPage; page += 2) {
+    const frontNumber = String(page).padStart(2, '0');
+    const backNumber = String(page + 1).padStart(2, '0');
+
+    leaves.push({
+      front: `../images/work/${folder}/page-${frontNumber}.webp`,
+      back: `../images/work/${folder}/page-${backNumber}.webp`
+    });
+  }
+
+  return leaves;
+}
+
+const bookConfigs = {
+  metamorfose: {
+    accent: '#E0442A',
+
+    cover: {
+      outer: '../images/work/metamorfose/cover.webp',
+      inner: '../images/work/metamorfose/cover-verso.webp'
+    },
+
+    backCover: {
+      inner: '../images/work/metamorfose/back-cover-verso.webp',
+      outer: '../images/work/metamorfose/back-cover.webp'
+    },
+
+    // 78 interior faces = 39 physical leaves.
+    // 4 cover/back-cover faces + 78 interior faces = 82 total faces.
+    pages: createPageLeaves('metamorfose', 1, 78)
+  },
+
+  raizes: {
+    accent: '#2A6E4F',
+
+    cover: {
+      outer: '../images/work/raizes/cover.webp',
+      inner: '../images/work/raizes/cover-verso.webp'
+    },
+
+    backCover: {
+      inner: '../images/work/raizes/back-cover-verso.webp',
+      outer: '../images/work/raizes/back-cover.webp'
+    },
+
+    // 20 interior faces = 10 physical leaves.
+    // 4 cover/back-cover faces + 20 interior faces = 24 total faces.
+    pages: createPageLeaves('raizes', 1, 20)
+  }
+};
+
+/* ---- Initialize every book viewer on the site ---- */
+
+document.querySelectorAll('.book-viewer[data-book]').forEach((element) => {
+  const bookName = element.dataset.book;
+  const config = bookConfigs[bookName];
+
+  if (config) {
+    BookFlip.init(element, config);
+  }
+});
