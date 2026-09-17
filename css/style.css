@@ -113,9 +113,6 @@ a { color: inherit; text-decoration: none; }
 
 /* ---- About page ---- */
 .about-page {
-  max-width: 600px;
-  margin: var(--space-xl) auto;
-  padding: 0 var(--space-lg);
 }
 
 .about-page h1 {
