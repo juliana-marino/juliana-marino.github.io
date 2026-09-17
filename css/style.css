@@ -14,7 +14,7 @@
   --color-text: #111111;
   --color-text-muted: #666666;
   --color-border: #e5e5e5;
-  --color-accent: #E0442A; /* placeholder — swap this */
+  --color-accent: hsl(340, 75%, 52%); /* placeholder — swap this */
 
   --font-sans: 'Inter', system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: 'Geist Pixel', var(--font-sans);
