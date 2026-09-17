@@ -418,7 +418,6 @@ a { color: inherit; text-decoration: none; }
   backface-visibility: hidden;
   overflow: hidden;
   background: var(--color-bg);
-  border: 3px solid red !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.14);
 }
 
@@ -513,4 +512,27 @@ a { color: inherit; text-decoration: none; }
   .page-placeholder .ph-hint {
     display: none;
   }
+}
+/* ---- Fix book images inside project pages ---- */
+
+.project-page .book-face {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: #ffffff;
+  border: 2px solid red !important;
+  border-radius: 0 !important;
+}
+
+.project-page .book-face img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  object-fit: contain !important;
+  object-position: center center;
 }
