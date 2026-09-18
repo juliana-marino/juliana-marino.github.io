@@ -557,6 +557,7 @@ a { color: inherit; text-decoration: none; }
 
 .book-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
+  color:hotpink;
   width: 14px;
   height: 14px;
   border-radius: 50%;
