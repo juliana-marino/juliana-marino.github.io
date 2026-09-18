@@ -321,6 +321,16 @@ a { color: inherit; text-decoration: none; }
 
 .book-viewer {
   --book-accent: var(--color-accent);
+
+  /* Customization hooks — set these from JS per book (see bookConfigs in
+     js/script.js) to override without touching this stylesheet. Each
+     falls back to --book-accent if left unset. */
+  --book-nav-hover: var(--book-accent);   /* arrow + close-button hover color */
+  --book-thumb-color: var(--book-accent); /* slider dragger background color */
+  --book-thumb-image: none;               /* slider dragger image, e.g. url('...png') */
+  --book-thumb-size: 14px;                /* slider dragger diameter */
+  --book-thumb-radius: 50%;               /* 50% = circle, 0 = square, etc. */
+
   position: relative;
   display: flex;
   flex-direction: column;
@@ -358,8 +368,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 .book-nav:hover:not(:disabled) {
-  border-color: var(--book-accent);
-  color: var(--book-accent);
+  border-color: var(--book-nav-hover);
+  color: var(--book-nav-hover);
 }
 
 .book-nav:active:not(:disabled) {
@@ -531,8 +541,8 @@ a { color: inherit; text-decoration: none; }
 }
 
 .book-close:hover:not(:disabled) {
-  border-color: var(--book-accent);
-  color: var(--book-accent);
+  border-color: var(--book-nav-hover);
+  color: var(--book-nav-hover);
 }
 
 .book-close:active:not(:disabled) {
@@ -557,13 +567,16 @@ a { color: inherit; text-decoration: none; }
 
 .book-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
-  color:hotpink;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--book-accent);
+  width: var(--book-thumb-size);
+  height: var(--book-thumb-size);
+  border-radius: var(--book-thumb-radius);
+  background-color: var(--book-thumb-color);
+  background-image: var(--book-thumb-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border: 2px solid var(--color-bg);
-  box-shadow: 0 0 0 1px var(--book-accent);
+  box-shadow: 0 0 0 1px var(--book-thumb-color);
   cursor: pointer;
 }
 
@@ -574,12 +587,16 @@ a { color: inherit; text-decoration: none; }
 }
 
 .book-slider::-moz-range-thumb {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--book-accent);
+  width: var(--book-thumb-size);
+  height: var(--book-thumb-size);
+  border-radius: var(--book-thumb-radius);
+  background-color: var(--book-thumb-color);
+  background-image: var(--book-thumb-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   border: 2px solid var(--color-bg);
-  box-shadow: 0 0 0 1px var(--book-accent);
+  box-shadow: 0 0 0 1px var(--book-thumb-color);
   cursor: pointer;
 }
 
@@ -611,7 +628,7 @@ a { color: inherit; text-decoration: none; }
   inset: 0;
   overflow: hidden;
   background:transparent;
-  border: 1px solid var(--color-border)!important;
+  border: 1px solid var(--color-border) !important;
   border-radius: 0 !important;
 }
 

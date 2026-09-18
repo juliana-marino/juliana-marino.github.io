@@ -29,6 +29,28 @@ class BookFlip {
 
     this.el.style.setProperty('--book-accent', this.accent);
 
+    // Optional customization — each falls back to the accent color above
+    // if left unset. See bookConfigs below for examples.
+    if (options.navHoverColor) {
+      this.el.style.setProperty('--book-nav-hover', options.navHoverColor);
+    }
+
+    if (options.thumbColor) {
+      this.el.style.setProperty('--book-thumb-color', options.thumbColor);
+    }
+
+    if (options.thumbImage) {
+      this.el.style.setProperty('--book-thumb-image', `url('${options.thumbImage}')`);
+    }
+
+    if (options.thumbSize) {
+      this.el.style.setProperty('--book-thumb-size', options.thumbSize);
+    }
+
+    if (options.thumbRadius) {
+      this.el.style.setProperty('--book-thumb-radius', options.thumbRadius);
+    }
+
     const cover = options.cover || {};
     const backCover = options.backCover || {};
 
@@ -375,6 +397,15 @@ const bookConfigs = {
   metamorfose: {
     accent: '#E0442A',
 
+    // Optional — override just the arrow/close hover color and the
+    // slider dragger, independent of the accent above. Delete any line
+    // you don't want customized and it falls back to `accent`.
+    // navHoverColor: '#111111',
+    // thumbColor: '#111111',
+    // thumbImage: '../images/work/metamorfose/dragger-icon.png',
+    // thumbSize: '20px',
+    // thumbRadius: '4px', // e.g. a rounded square instead of a circle
+
     cover: {
       outer: '../images/work/metamorfose/cover.webp',
       inner: '../images/work/metamorfose/cover-verso.webp'
@@ -392,6 +423,12 @@ const bookConfigs = {
 
   raizes: {
     accent: '#2A6E4F',
+
+    // navHoverColor: '#2A6E4F',
+    // thumbColor: '#2A6E4F',
+    // thumbImage: '../images/work/raizes/dragger-icon.png',
+    // thumbSize: '20px',
+    // thumbRadius: '4px',
 
     cover: {
       outer: '../images/work/raizes/cover.webp',
