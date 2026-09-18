@@ -424,7 +424,7 @@ const bookConfigs = {
   raizes: {
     accent: '#hsl(340, 75%, 52%)',
     navHoverColor: 'hsl(340, 75%, 52%)',
-    // thumbColor: '#hsl(340, 75%, 52%)',
+    thumbColor: '#hsl(340, 75%, 52%)',
     // thumbImage: '../images/work/raizes/dragger-icon.png',
     // thumbSize: '20px',
     // thumbRadius: '4px',
