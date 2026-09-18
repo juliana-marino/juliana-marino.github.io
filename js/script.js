@@ -62,20 +62,31 @@ class BookFlip {
 
   build() {
     this.el.innerHTML = `
-      <button class="book-nav prev" type="button" aria-label="Página anterior">
-        &larr;
-      </button>
+      <div class="book-row">
+        <button class="book-nav prev" type="button" aria-label="Página anterior">
+          &larr;
+        </button>
 
-      <div class="book-stage"></div>
+        <div class="book-stage"></div>
 
-      <button class="book-nav next" type="button" aria-label="Próxima página">
-        &rarr;
-      </button>
+        <button class="book-nav next" type="button" aria-label="Próxima página">
+          &rarr;
+        </button>
+      </div>
+
+      <div class="book-scrubber">
+        <button class="book-close" type="button" aria-label="Fechar livro (voltar à capa)" title="Fechar livro">
+          &#8676;
+        </button>
+        <input type="range" class="book-slider" min="0" max="0" value="0" step="1" aria-label="Ir para uma página">
+      </div>
     `;
 
     this.stage = this.el.querySelector('.book-stage');
     this.prevBtn = this.el.querySelector('.prev');
     this.nextBtn = this.el.querySelector('.next');
+    this.closeBtn = this.el.querySelector('.book-close');
+    this.slider = this.el.querySelector('.book-slider');
 
     this.cards = this.leaves.map((leaf) => {
       const card = document.createElement('div');
@@ -104,6 +115,10 @@ class BookFlip {
       this.stage.appendChild(card);
       return card;
     });
+
+    // Now that we know how many leaves there are, the slider can span
+    // from the closed cover (0) to the closed back cover (total).
+    this.slider.max = String(this.cards.length);
   }
 
   isTransparent(leaf, side) {
@@ -208,6 +223,15 @@ class BookFlip {
     this.prevBtn.disabled = this.current === 0;
     this.nextBtn.disabled = this.current >= total;
 
+    if (this.closeBtn) {
+      // Already at the cover — nothing to close.
+      this.closeBtn.disabled = this.current === 0;
+    }
+
+    if (this.slider) {
+      this.slider.value = String(this.current);
+    }
+
     const progress = this.el.parentElement.querySelector('[data-progress]');
 
     if (progress) {
@@ -249,9 +273,34 @@ class BookFlip {
     }, 700);
   }
 
+  // Jump straight to any spread — used by the close-book button and the
+  // scrubber slider so you don't have to click through every page.
+  goTo(index) {
+    const total = this.cards.length;
+    const clamped = Math.max(0, Math.min(total, index));
+
+    if (clamped === this.current || this.animating) {
+      return;
+    }
+
+    this.animating = true;
+    this.current = clamped;
+    this.render();
+
+    setTimeout(() => {
+      this.animating = false;
+    }, 700);
+  }
+
   bindEvents() {
     this.nextBtn.addEventListener('click', () => this.next());
     this.prevBtn.addEventListener('click', () => this.prev());
+
+    this.closeBtn.addEventListener('click', () => this.goTo(0));
+
+    this.slider.addEventListener('input', (event) => {
+      this.goTo(Number(event.target.value));
+    });
 
     this.stage.addEventListener('click', (event) => {
       const card = event.target.closest('.book-leaf');
@@ -280,6 +329,16 @@ class BookFlip {
       if (event.key === 'ArrowLeft') {
         event.preventDefault();
         this.prev();
+      }
+
+      if (event.key === 'Home') {
+        event.preventDefault();
+        this.goTo(0);
+      }
+
+      if (event.key === 'End') {
+        event.preventDefault();
+        this.goTo(this.cards.length);
       }
     });
   }
