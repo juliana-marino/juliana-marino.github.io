@@ -422,10 +422,9 @@ const bookConfigs = {
   },
 
   raizes: {
-    accent: '#2A6E4F',
-
-    // navHoverColor: '#2A6E4F',
-    // thumbColor: '#2A6E4F',
+    accent: '#hsl(340, 75%, 52%)',
+    navHoverColor: 'hsl(340, 75%, 52%)',
+    // thumbColor: '#hsl(340, 75%, 52%)',
     // thumbImage: '../images/work/raizes/dragger-icon.png',
     // thumbSize: '20px',
     // thumbRadius: '4px',
