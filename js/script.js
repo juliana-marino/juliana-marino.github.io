@@ -416,9 +416,9 @@ const bookConfigs = {
       outer: '../images/work/metamorfose/back-cover.webp'
     },
 
-    // 78 interior faces = 39 physical leaves.
-    // 4 cover/back-cover faces + 78 interior faces = 82 total faces.
-    pages: createPageLeaves('metamorfose', 1, 78)
+    // 24 interior faces = 12 physical leaves.
+    // 4 cover/back-cover faces + 24 interior faces = 28 total faces.
+    pages: createPageLeaves('metamorfose', 1, 24)
   },
 
   raizes: {
